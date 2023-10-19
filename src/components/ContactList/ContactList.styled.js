@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 export const ListContainer = styled.ul`
   margin-top: 20px;
-  width: 470px;
+  width: 600px;
 `;
 
 export const ListItem = styled.li`
@@ -17,4 +17,11 @@ export const ListDeleteBtn = styled.button`
   font-weight: 700;
   border-radius: 10%;
   background: #ff9d96;
+`;
+
+export const EmptyList = styled.p`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 100px;
 `;

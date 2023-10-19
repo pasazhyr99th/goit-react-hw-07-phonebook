@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from 'redux/contactsSlice';
+import { addContact } from 'redux/operations';
+import { selectContacts } from 'redux/selectors';
 import { nanoid } from 'nanoid';
 import { FormStyle, FormLabel, FormInput, FormBtn } from './ContactForm.styled';
 import { ToastContainer, toast } from 'react-toastify';
@@ -8,7 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export default function ContactForm() {
   const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contacts);
+  const contacts = useSelector(selectContacts);
 
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
@@ -51,7 +52,7 @@ export default function ContactForm() {
       return reset();
     }
 
-    dispatch(addContact(name, number));
+    dispatch(addContact({ name, number }));
     reset();
   };
 

@@ -1,21 +1,30 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteContact } from 'redux/contactsSlice';
-import { ListContainer, ListItem, ListDeleteBtn } from './ContactList.styled';
+import { deleteContact } from 'redux/operations';
+import {
+  ListContainer,
+  ListItem,
+  ListDeleteBtn,
+  EmptyList,
+} from './ContactList.styled';
+import { fetchContacts } from 'redux/operations';
+import {
+  selectIsLoading,
+  selectError,
+  selectVisibleContacts,
+} from 'redux/selectors';
+import Loader from 'components/Loader';
 
 const ContactList = () => {
   const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contacts);
-  const filter = useSelector(state => state.filter.inputValue);
 
-  const getFilteredContacts = () => {
-    const normalizedFilter = filter ? filter.toLowerCase() : '';
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalizedFilter)
-    );
-  };
+  const visibleContacts = useSelector(selectVisibleContacts);
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectError);
 
-  const filteredContacts = getFilteredContacts();
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
   const handleDelete = id => {
     dispatch(deleteContact(id));
@@ -23,14 +32,22 @@ const ContactList = () => {
 
   return (
     <ListContainer>
-      {filteredContacts.map(({ id, name, number }) => (
-        <ListItem key={id}>
-          <p>
-            {name}: {number}
-          </p>
-          <ListDeleteBtn onClick={() => handleDelete(id)}>Delete</ListDeleteBtn>
-        </ListItem>
-      ))}
+      {isLoading && !error ? (
+        <Loader />
+      ) : visibleContacts.length === 0 && !error ? (
+        <EmptyList>Your Phonebook is empty. Enter new contacts</EmptyList>
+      ) : (
+        visibleContacts.map(({ id, name, number }) => (
+          <ListItem key={id}>
+            <p>
+              {name}: {number}
+            </p>
+            <ListDeleteBtn onClick={() => handleDelete(id)}>
+              Delete
+            </ListDeleteBtn>
+          </ListItem>
+        ))
+      )}
     </ListContainer>
   );
 };
